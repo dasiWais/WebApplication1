@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "projects": {
+    "forms-client": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "index": "src/index.html",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.app.json",
+            "styles": ["src/styles.css"]
+          }
+        },
+        "serve": { "builder": "@angular/build:dev-server", "options": { "buildTarget": "forms-client:build" } }
+      }
+    }
+  },
+  "cli": {
+    "analytics": "bfc219ee-9067-4eb1-8634-c582cbabc133"
+  }
+}

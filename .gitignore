@@ -1,0 +1,10 @@
+.vs/
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/cache/
+**/forms.db
+**/forms.db-shm
+**/forms.db-wal
+*.user

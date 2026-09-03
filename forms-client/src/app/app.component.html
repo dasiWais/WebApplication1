@@ -1,0 +1,33 @@
+<main class="workspace" dir="rtl">
+  <header class="hero"><p class="eyebrow">{{ text.eyebrow }}</p><h1>{{ text.title }}</h1><p>{{ text.subtitle }}</p></header>
+
+  <div class="layout">
+    <form class="panel editor" [formGroup]="form" (ngSubmit)="save()" *ngIf="editingApprovalTemplate === null">
+      <div class="panel-heading"><div><span class="step-number">01</span><h2>{{ text.formDetails }}</h2></div><button class="primary top-save" type="submit" [disabled]="loading$ | async">{{ (loading$ | async) ? text.saving : text.saveTemplate }} <span>←</span></button></div>
+      <label class="field-label">{{ text.formName }}<input formControlName="name" [placeholder]="text.formNamePlaceholder" /></label>
+      <label class="field-label">{{ text.createdBy }}<input formControlName="createdBy" [placeholder]="text.userIdPlaceholder" /></label>
+
+      <section class="builder-section"><div class="section-heading"><div><span class="step-number">02</span><h2>{{ text.fields }}</h2></div><span>{{ fields.length }} {{ text.fieldsCount }}</span></div>
+        <div class="toolbar"><button type="button" (click)="addField('Text')">{{ text.addTextField }}</button><button type="button" (click)="addField('Date')">{{ text.addDateField }}</button></div>
+        <div class="empty-state" *ngIf="fields.length === 0">{{ text.chooseFieldType }}</div>
+        <div class="item-list" formArrayName="fields"><div class="list-item" *ngFor="let field of fields.controls; let i = index" [formGroupName]="i"><span class="order">{{ i + 1 | number:'2.0-0' }}</span><input formControlName="label" [placeholder]="text.fieldLabelPlaceholder" /><span class="type-tag">{{ field.value.fieldType }}</span><label class="check"><input type="checkbox" formControlName="isRequired" /> {{ text.required }}</label><button class="icon-button" type="button" (click)="remove(fields, i)" [attr.aria-label]="text.removeField">×</button></div></div>
+      </section>
+
+      <div class="actions"><button class="primary" type="submit" [disabled]="loading$ | async">{{ (loading$ | async) ? text.saving : text.saveTemplate }} <span>←</span></button><span class="success" *ngIf="saved$ | async">{{ text.saved }}</span><span class="error" *ngIf="validationError">{{ validationError }}</span><span class="error" *ngIf="error$ | async as error">{{ error }}</span></div>
+    </form>
+
+    <section class="panel approval-editor" [formGroup]="form" *ngIf="editingApprovalTemplate !== null"><div class="panel-heading"><div><span class="step-number">05</span><h2>{{ text.approvalEditor }}</h2></div><button type="button" class="text-button" (click)="editingApprovalTemplate = null">{{ text.cancel }}</button></div><p class="aside-copy">{{ text.approvalEditorDescription }}</p><div class="item-list" formArrayName="approvalSteps"><div class="list-item approval" *ngFor="let step of approvalSteps.controls; let i = index" [formGroupName]="i"><span class="order">{{ i + 1 | number:'2.0-0' }}</span><input formControlName="name" [placeholder]="text.stepNamePlaceholder" /><input formControlName="approverId" [placeholder]="text.actionTypePlaceholder" /><select formControlName="actionType"><option [ngValue]="1">{{ text.approve }}</option><option [ngValue]="2">{{ text.reject }}</option></select><button class="icon-button" type="button" (click)="remove(approvalSteps, i)" [attr.aria-label]="text.removeStep">×</button></div></div><div class="actions"><button type="button" class="text-button" (click)="addStep()">{{ text.addStep }}</button><button type="button" class="primary" (click)="saveApprovalSteps()" [disabled]="loading$ | async">{{ text.saveApprovalSteps }}</button></div><span class="success" *ngIf="approvalStatus">{{ approvalStatus }}</span></section>
+
+    <aside class="panel library"><div class="panel-heading"><div><span class="step-number">04</span><h2>{{ text.myTemplates }}</h2></div><span class="count">{{ (templates$ | async)?.length || 0 }}</span></div><p class="aside-copy">{{ text.recentlySaved }}</p><div class="template-list" *ngIf="templates$ | async as templates"><div class="template" *ngFor="let template of templates"><div><strong>{{ template.name }}</strong><small>{{ template.fields.length }} {{ text.fieldsCount }} · {{ template.approvalSteps.length }} מאשרים</small><button class="text-button" type="button" (click)="startApprovalSteps(template)">{{ text.addApprovalSteps }}</button></div><span class="active-mark">●</span></div><div class="empty-state" *ngIf="templates.length === 0">{{ text.templateEmpty }}</div></div></aside>
+  </div>
+</main>
+
+<div class="success-modal-backdrop" *ngIf="saved$ | async" role="presentation">
+  <section class="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-title">
+    <div class="success-icon" aria-hidden="true">✓</div>
+    <p class="eyebrow">{{ text.savedEyebrow }}</p>
+    <h2 id="success-title">{{ text.saved }}</h2>
+    <p>{{ text.savedDescription }}</p>
+    <button class="primary modal-close" type="button" (click)="dismissSavedMessage()">{{ text.understood }}</button>
+  </section>
+</div>
